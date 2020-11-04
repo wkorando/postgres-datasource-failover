@@ -2,8 +2,10 @@ package com.ibm.developer.datasourcefailover;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="names")
 public class Name {
 	@Id
 	private int id;

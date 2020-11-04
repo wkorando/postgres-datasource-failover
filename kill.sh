@@ -1,2 +1,2 @@
-docker rm $(docker stop $(docker ps -a -q -f name=multi-datasource_clinics-db_1))
-docker rm $(docker stop $(docker ps -a -q -f name=multi-datasource_doctors-db_1))
+docker rm $(docker stop $(docker ps -a -q -f name=primary-db))
+docker rm $(docker stop $(docker ps -a -q -f name=failover-db))

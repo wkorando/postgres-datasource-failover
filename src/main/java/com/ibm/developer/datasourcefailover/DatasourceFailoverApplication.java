@@ -9,8 +9,11 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Primary;
 
 @SpringBootApplication
@@ -23,16 +26,31 @@ public class DatasourceFailoverApplication {
 	}
 
 	@Bean
+	@ConfigurationProperties(prefix = "primary.datasource")
+	public DataSource primaryDataSource() {
+		return DataSourceBuilder.create().build();
+	}
+	
+	@Bean
+	@ConfigurationProperties(prefix = "failover.datasource")
+	public DataSource failoverDataSource() {
+		return DataSourceBuilder.create().build();
+	}
+
+	@Bean
 	@Primary
-	public DataSource creatingRoutingDatasource(@Qualifier("primary") DataSource primaryDatasource,
-			@Qualifier("failover") DataSource failoverDatasource) throws SQLException {
+	@DependsOn({"primaryDataSource", "failoverDataSource"})
+	public DataSource creatingRoutingDatasource(
+			@Qualifier("primaryDataSource") DataSource primaryDataSource,
+			@Qualifier("failoverDataSource") DataSource failoverDataSource
+			) throws SQLException {
 		Map<Object, Object> targetDataSources = new HashMap<>();
-		targetDataSources.put(ActiveDatabase.PRIMARY, primaryDatasource);
-		targetDataSources.put(ActiveDatabase.FAILOVER, failoverDatasource);
+		targetDataSources.put(ActiveDatabase.PRIMARY, primaryDataSource);
+		targetDataSources.put(ActiveDatabase.FAILOVER, failoverDataSource);
 
 		FailoverDatasourceRouter aaFailoverDatasourceRouter = new FailoverDatasourceRouter();
 		aaFailoverDatasourceRouter.setTargetDataSources(targetDataSources);
-		aaFailoverDatasourceRouter.setDefaultTargetDataSource(primaryDatasource);
+		aaFailoverDatasourceRouter.setDefaultTargetDataSource(primaryDataSource);
 		return aaFailoverDatasourceRouter;
 	}
 }

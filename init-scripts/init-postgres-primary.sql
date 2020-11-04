@@ -1,6 +1,6 @@
-CREATE TABLE DOCTORS (
+CREATE TABLE NAMES (
 	id SERIAL PRIMARY KEY,
-	name VARCHAR(50);
+	name VARCHAR(50)
 );
 
-INSERT INTO DOCTORS (first_name, last_name, specialization) VALUES ('In Primary');
+INSERT INTO NAMES (name) VALUES ('In primary');

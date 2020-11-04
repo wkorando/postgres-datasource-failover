@@ -10,7 +10,6 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 public class FailoverDatasourceRouter extends AbstractRoutingDataSource {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FailoverDatasourceRouter.class);
 	private ActiveDatabase activeDatabase = ActiveDatabase.PRIMARY;
-	ActiveDatabaseHolder activeDatabaseHolder = new ActiveDatabaseHolder();
 
 	@Override
 	protected Object determineCurrentLookupKey() {
@@ -37,7 +36,7 @@ public class FailoverDatasourceRouter extends AbstractRoutingDataSource {
 				return getConnection();
 			} else {
 				/*
-				 * If already in failover, presumably boned at this point, so throw error and 500.
+				 * If already in failover, presumably boned at this point, so throw error and 500 reponse.
 				 */
 				throw e;
 			}
