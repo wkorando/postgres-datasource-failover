@@ -48,9 +48,9 @@ public class DatasourceFailoverApplication {
 		targetDataSources.put(ActiveDatabase.PRIMARY, primaryDataSource);
 		targetDataSources.put(ActiveDatabase.FAILOVER, failoverDataSource);
 
-		FailoverDatasourceRouter aaFailoverDatasourceRouter = new FailoverDatasourceRouter();
-		aaFailoverDatasourceRouter.setTargetDataSources(targetDataSources);
-		aaFailoverDatasourceRouter.setDefaultTargetDataSource(primaryDataSource);
-		return aaFailoverDatasourceRouter;
+		FailoverDatasourceRouter failoverDatasource = new FailoverDatasourceRouter();
+		failoverDatasource.setTargetDataSources(targetDataSources);
+		failoverDatasource.setDefaultTargetDataSource(primaryDataSource);
+		return failoverDatasource;
 	}
 }
