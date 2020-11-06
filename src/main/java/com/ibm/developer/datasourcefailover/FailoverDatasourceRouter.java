@@ -36,7 +36,7 @@ public class FailoverDatasourceRouter extends AbstractRoutingDataSource {
 				return getConnection();
 			} else {
 				/*
-				 * If already in failover, presumably boned at this point, so throw error and 500 reponse.
+				 * If already in failover, presumably boned at this point, so throw error and 500 response.
 				 */
 				throw e;
 			}
