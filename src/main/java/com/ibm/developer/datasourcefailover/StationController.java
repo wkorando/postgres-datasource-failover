@@ -4,15 +4,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class NameController {
-	private NameRepo repo;
-
-	public NameController(NameRepo repo) {
+public class StationController {
+	private StationRepo repo;
+	public StationController(StationRepo repo) {
 		this.repo = repo;
 	}
 
 	@GetMapping
-	public Iterable<Name> getName() {
+	public Iterable<Station> getName() {
 		return repo.findAll();
 	}
 }
