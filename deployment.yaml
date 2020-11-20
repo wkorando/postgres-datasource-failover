@@ -16,27 +16,41 @@ spec:
     spec:
       containers:
       - name: failover-test-service
-        image:  wkorando/postgres-failover-test:1
+        image:  us.icr.io/wkorando/postgres-failover:8
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
-        - name: spring.datasource.hikari.maximum-pool-size
-          value: "25"
-        - name: spring.datasource.hikari.max-lifetime
-          value: "60000"
+        - name: spring.datasource.type
+          value: org.apache.tomcat.jdbc.pool.DataSource
         - name: spring.datasource.username
           value: "<>"
-        - name: logging.level.org.springframework.boot.actuate
-          value: DEBUG  
-        - name: logging.level.org.springframework
-          value: ERROR  
-        - name: logging.level.com.zaxxer.hikari
-          value: DEBUG
         - name: spring.datasource.password
           value: "<>"
+        - name: spring.datasource.tomcat.max-active
+          value: "20"
+        - name: spring.datasource.tomcat.min-idle
+          value: "10"
+        - name: spring.datasource.tomcat.test-on-borrow
+          value: "true"
+        - name: spring.datasource.tomcat.test-on-connect
+          value: "true"
+        - name: spring.datasource.tomcat.test-on-return
+          value: "true"
+        - name: spring.datasource.tomcat.test-while-idle
+          value: "true"
+        - name: spring.datasource.tomcat.validation-query
+          value: "SELECT 1"
+        - name: spring.datasource.tomcat.validation-interval
+          value: "60"
+        - name: spring.datasource.tomcat.validation-query-timeout
+          value: "5"
+        - name: spring.datasource.tomcat.remove-abandoned
+          value: "true"
+        - name: spring.datasource.tomcat.remove-abandoned-timeout
+          value: "60"
         - name: spring.datasource.url
-          value: "jdbc:postgresql://,./ibmclouddb?ssl=true&sslmode=require&sslfactory=org.postgresql.ssl.NonValidatingFactory"
+          value: "jdbc:postgresql://<>/ibmclouddb?ssl=true&sslmode=require&sslfactory=org.postgresql.ssl.NonValidatingFactory"
 #        - name: spring.datasource.hikari.data-source-properties.socketTimeout
 #          value: "60"
 #        - name: JAVA_OPTS
