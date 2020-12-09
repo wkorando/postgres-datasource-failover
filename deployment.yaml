@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: failover-test-service-original
+  name: failover-test-service-health-probe
   labels:
-    app: failover-test-service-original
+    app: failover-test-service-health-probe
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: failover-test-service-original
+      app: failover-test-service-health-probe
   template:
     metadata:
       labels:
-        app: failover-test-service-original
+        app: failover-test-service-health-probe
     spec:
       containers:
       - name: failover-test-service
@@ -20,205 +20,16 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /management/health
+            port: 8080
+          initialDelaySeconds: 45
+          periodSeconds: 2
+          failureThreshold: 1
         env:
-        - name: spring.datasource.hikari.maximum-pool-size
-          value: "25"
-        - name: spring.datasource.hikari.max-lifetime
-          value: "60000"
-        - name: logging.level.org.springframework
-          value: ERROR  
-        - name: logging.level.com.zaxxer.hikari
-          value: DEBUG
-        - name: spring.datasource.username
-          value: "<>"
-        - name: spring.datasource.password
-          value: "<>"
-        - name: spring.datasource.url
-          value: "jdbc:postgresql://<>/ibmclouddb?ssl=true&sslmode=require&sslfactory=org.postgresql.ssl.NonValidatingFactory"
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: failover-test-service-test-query
-  labels:
-    app: failover-test-service-test-query
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: failover-test-service-test-query
-  template:
-    metadata:
-      labels:
-        app: failover-test-service-test-query
-    spec:
-      containers:
-      - name: failover-test-service
-        image:  wkorando/postgres-failover:2
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8080
-        env:
-        - name: spring.datasource.hikari.maximum-pool-size
-          value: "25"
-        - name: spring.datasource.hikari.max-lifetime
-          value: "60000"
-        - name: logging.level.org.springframework
-          value: ERROR  
-        - name: spring.datasource.hikari.connection-test-query
-          value: "SELECT 1"
-        - name: logging.level.com.zaxxer.hikari
-          value: DEBUG
-        - name: spring.datasource.username
-          value: "<>"
-        - name: spring.datasource.password
-          value: "<>"
-        - name: spring.datasource.url
-          value: "jdbc:postgresql://<>/ibmclouddb?ssl=true&sslmode=require&sslfactory=org.postgresql.ssl.NonValidatingFactory"
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: failover-test-service-datasource-properties
-  labels:
-    app: failover-test-service-datasource-properties
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: failover-test-service-datasource-properties
-  template:
-    metadata:
-      labels:
-        app: failover-test-service-datasource-properties
-    spec:
-      containers:
-      - name: failover-test-service
-        image:  wkorando/postgres-failover:2
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8080
-        env:
-        - name: spring.datasource.hikari.maximum-pool-size
-          value: "25"
-        - name: spring.datasource.hikari.max-lifetime
-          value: "60000"
-        - name: spring.datasource.hikari.data-source-properties.cachePrepStmts
-          value: "true"
-        - name: spring.datasource.hikari.data-source-properties.prepStmtCacheSize
-          value: "250"
-        - name: spring.datasource.hikari.data-source-properties.prepStmtCacheSqlLimit
-          value: "2048"
-        - name: spring.datasource.hikari.data-source-properties.useServerPrepStmts
-          value: "true"
-        - name: spring.datasource.hikari.data-source-properties.transaction-isolation
-          value: "TRANSACTION_READ_COMMITTED"
-        - name: logging.level.org.springframework
-          value: ERROR  
-        - name: logging.level.com.zaxxer.hikari
-          value: DEBUG
-        - name: spring.datasource.username
-          value: "<>"
-        - name: spring.datasource.password
-          value: "<>"
-        - name: spring.datasource.url
-          value: "jdbc:postgresql://<>/ibmclouddb?ssl=true&sslmode=require&sslfactory=org.postgresql.ssl.NonValidatingFactory"
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: failover-test-service-jpa-properties
-  labels:
-    app: failover-test-service-jpa-properties
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: failover-test-service-jpa-properties
-  template:
-    metadata:
-      labels:
-        app: failover-test-service-jpa-properties
-    spec:
-      containers:
-      - name: failover-test-service
-        image:  wkorando/postgres-failover:2
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8080
-        env:
-        - name: spring.jpa.properties.hibernate.id.new_generator_mappings
-          value: "true"
-        - name: spring.jpa.properties.hibernate.cache.use_second_level_cache
-          value: "true"
-        - name: spring.jpa.properties.hibernate.cache.use_query_cache
-          value: "false"
-        - name: spring.jpa.properties.hibernate.generate_statistics
-          value: "false"
-        - name: spring.jpa.properties.hibernate.ddl-auto
-          value: "none"
-#        - name: spring.jpa.properties.hibernate.cache.region.factory_class
-#          value: io.github.jhipster.config.jcache.BeanClassLoaderAwareJCacheRegionFactory         
-        - name: spring.datasource.hikari.maximum-pool-size
-          value: "25"
-        - name: spring.datasource.hikari.max-lifetime
-          value: "60000"
-        - name: logging.level.org.springframework
-          value: ERROR  
-        - name: logging.level.com.zaxxer.hikari
-          value: DEBUG
-        - name: spring.datasource.username
-          value: "<>"
-        - name: spring.datasource.password
-          value: "<>"
-        - name: spring.datasource.url
-          value: "jdbc:postgresql://<>/ibmclouddb?ssl=true&sslmode=require&sslfactory=org.postgresql.ssl.NonValidatingFactory"
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: failover-test-service-match-current
-  labels:
-    app: failover-test-service-match-current
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: failover-test-service-match-current
-  template:
-    metadata:
-      labels:
-        app: failover-test-service-match-current
-    spec:
-      containers:
-      - name: failover-test-service
-        image:  wkorando/postgres-failover:2
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8080
-        env:
-        - name: spring.datasource.hikari.connection-test-query
-          value: "SELECT 1"
-        - name: spring.datasource.hikari.data-source-properties.cachePrepStmts
-          value: "true"
-        - name: spring.datasource.hikari.data-source-properties.prepStmtCacheSize
-          value: "250"
-        - name: spring.datasource.hikari.data-source-properties.prepStmtCacheSqlLimit
-          value: "2048"
-        - name: spring.datasource.hikari.data-source-properties.useServerPrepStmts
-          value: "true"
-        - name: spring.jpa.properties.hibernate.id.new_generator_mappings
-          value: "true"
-        - name: spring.jpa.properties.hibernate.cache.use_second_level_cache
-          value: "true"
-        - name: spring.jpa.properties.hibernate.cache.use_query_cache
-          value: "false"
-        - name: spring.jpa.properties.hibernate.generate_statistics
-          value: "false"
-        - name: spring.jpa.properties.hibernate.ddl-auto
-          value: "none"
-#        - name: spring.jpa.properties.hibernate.cache.region.factory_class
-#          value: io.github.jhipster.config.jcache.BeanClassLoaderAwareJCacheRegionFactory   
+        - name: management.endpoints.web.base-path
+          value: "/management"
         - name: spring.datasource.hikari.maximum-pool-size
           value: "25"
         - name: spring.datasource.hikari.max-lifetime
@@ -237,60 +48,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: failover-test-port-original
+  name: failover-test-port-health-probe
 spec:
   type: NodePort
   selector:
-    app: failover-test-service-original
+    app: failover-test-service-health-probe
   ports:
     - port: 8080
-      name: http
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: failover-test-port-test-query
-spec:
-  type: NodePort
-  selector:
-    app: failover-test-service-test-query
-  ports:
-    - port: 8080
-      name: http    
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: failover-test-port-datasource-properties
-spec:
-  type: NodePort
-  selector:
-    app: failover-test-service-datasource-properties
-  ports:
-    - port: 8080
-      name: http    
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: failover-test-port-jpa-properties
-spec:
-  type: NodePort
-  selector:
-    app: failover-test-service-jpa-properties
-  ports:
-    - port: 8080
-      name: http    
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: failover-test-port-match-current
-spec:
-  type: NodePort
-  selector:
-    app: failover-test-service-match-current
-  ports:
-    - port: 8080
-      name: http    
+      name: http   
       
