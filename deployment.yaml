@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: failover-test-service
-        image:  wkorando/postgres-failover:2
+        image:  wkorando/postgres-failover:3
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -24,9 +24,14 @@ spec:
           httpGet:
             path: /management/health
             port: 8080
-          initialDelaySeconds: 45
-          periodSeconds: 2
+          periodSeconds: 10
           failureThreshold: 1
+        startupProbe:
+          httpGet:
+            path: /management/health
+            port: 8080
+          failureThreshold: 30
+          periodSeconds: 10        
         env:
         - name: management.endpoints.web.base-path
           value: "/management"
