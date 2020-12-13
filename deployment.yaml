@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: failover-test-service
-        image:  wkorando/postgres-failover:3
+        image:  wkorando/postgres-failover:boot-15-2
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -43,12 +43,23 @@ spec:
           value: ERROR  
         - name: logging.level.com.zaxxer.hikari
           value: DEBUG
+        - name: spring.datasource.type
+          value: com.zaxxer.hikari.HikariDataSource
         - name: spring.datasource.username
-          value: "<>"
+          valueFrom:
+            secretKeyRef:
+              name: datasource-connection-info
+              key: db-username
         - name: spring.datasource.password
-          value: "<>"
+          valueFrom:
+            secretKeyRef:
+              name: datasource-connection-info
+              key: db-password
         - name: spring.datasource.url
-          value: "jdbc:postgresql://<>/ibmclouddb?ssl=true&sslmode=require&sslfactory=org.postgresql.ssl.NonValidatingFactory"
+          valueFrom:
+            secretKeyRef:
+              name: datasource-connection-info
+              key: db-url
 ---
 apiVersion: v1
 kind: Service
